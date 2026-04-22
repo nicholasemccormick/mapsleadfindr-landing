@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapsLeadFindr — Find Weak Google Business Profiles Instantly</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #FDF6ED;
+      --peach: #F5E6D0;
+      --orange: #E8733A;
+      --orange-light: #F59B6A;
+      --orange-dark: #C45820;
+      --brown: #3D2012;
+      --brown-mid: #7A3E1E;
+      --card-bg: #FFFFFF;
+      --shadow: 0 4px 24px rgba(61,32,18,0.08);
+      --shadow-lg: 0 12px 48px rgba(61,32,18,0.14);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--brown);
+      overflow-x: hidden;
+    }
+
+    /* ── Nav ── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 60px;
+      position: sticky;
+      top: 0;
+      background: rgba(253,246,237,0.92);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      border-bottom: 1px solid rgba(232,115,58,0.12);
+    }
+
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--brown);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-logo span {
+      background: var(--orange);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .nav-cta {
+      background: var(--brown);
+      color: white;
+      padding: 10px 24px;
+      border-radius: 100px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .nav-cta:hover {
+      background: var(--orange);
+      transform: translateY(-1px);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 80px 60px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(232,115,58,0.1);
+      border: 1px solid rgba(232,115,58,0.25);
+      color: var(--orange-dark);
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1.08;
+      color: var(--brown);
+      margin-bottom: 20px;
+      animation: fadeUp 0.6s ease 0.1s both;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--orange);
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--brown-mid);
+      font-weight: 300;
+      margin-bottom: 36px;
+      animation: fadeUp 0.6s ease 0.2s both;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s ease 0.3s both;
+    }
+
+    .btn-primary {
+      background: var(--orange);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 100px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(232,115,58,0.35);
+    }
+
+    .btn-primary:hover {
+      background: var(--orange-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(232,115,58,0.45);
+    }
+
+    .btn-secondary {
+      color: var(--brown-mid);
+      font-size: 14px;
+      font-weight: 400;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-secondary:hover { color: var(--orange); }
+
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      margin-top: 48px;
+      animation: fadeUp 0.6s ease 0.4s both;
+    }
+
+    .stat-item { }
+
+    .stat-number {
+      font-family: 'Syne', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--brown);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--brown-mid);
+      margin-top: 2px;
+    }
+
+    /* ── Hero Visual ── */
+    .hero-visual {
+      animation: fadeUp 0.8s ease 0.2s both;
+      position: relative;
+    }
+
+    .phone-mockup {
+      background: var(--card-bg);
+      border-radius: 28px;
+      padding: 20px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(232,115,58,0.1);
+      max-width: 340px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .phone-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .phone-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--brown);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .phone-badge {
+      background: rgba(232,115,58,0.1);
+      color: var(--orange);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 100px;
+    }
+
+    .lead-card {
+      background: var(--cream);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(232,115,58,0.1);
+      transition: transform 0.2s;
+    }
+
+    .lead-card:hover { transform: translateX(3px); }
+
+    .lead-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .lead-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--brown);
+    }
+
+    .lead-cat {
+      font-size: 10px;
+      color: var(--brown-mid);
+      margin-top: 2px;
+    }
+
+    .score-badge {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+
+    .score-hot { background: rgba(220,38,38,0.1); color: #DC2626; }
+    .score-warm { background: rgba(245,158,11,0.1); color: #D97706; }
+    .score-cold { background: rgba(59,130,246,0.1); color: #2563EB; }
+
+    .lead-signals {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .signal-pill {
+      background: white;
+      border: 1px solid rgba(61,32,18,0.1);
+      color: var(--brown-mid);
+      font-size: 9px;
+      font-weight: 500;
+      padding: 2px 7px;
+      border-radius: 100px;
+    }
+
+    .scan-btn {
+      width: 100%;
+      background: var(--orange);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .floating-card {
+      position: absolute;
+      background: white;
+      border-radius: 14px;
+      padding: 12px 16px;
+      box-shadow: var(--shadow-lg);
+      font-size: 11px;
+    }
+
+    .floating-card-1 {
+      top: -20px;
+      right: -30px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .floating-card-2 {
+      bottom: 30px;
+      left: -30px;
+      animation: float 3s ease-in-out 1.5s infinite;
+    }
+
+    .fc-icon {
+      width: 32px;
+      height: 32px;
+      background: rgba(232,115,58,0.1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .fc-label { font-size: 10px; color: var(--brown-mid); }
+    .fc-value { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; color: var(--brown); }
+
+    /* ── How It Works ── */
+    .section {
+      padding: 80px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 40px;
+      font-weight: 800;
+      color: var(--brown);
+      line-height: 1.15;
+      margin-bottom: 48px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .step-card {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(232,115,58,0.08);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .step-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .step-number {
+      font-family: 'Syne', sans-serif;
+      font-size: 48px;
+      font-weight: 800;
+      color: rgba(232,115,58,0.15);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .step-icon {
+      font-size: 28px;
+      margin-bottom: 14px;
+    }
+
+    .step-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--brown);
+      margin-bottom: 10px;
+    }
+
+    .step-desc {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--brown-mid);
+      font-weight: 300;
+    }
+
+    /* ── Features ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(232,115,58,0.08);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: transform 0.2s;
+    }
+
+    .feature-card:hover { transform: translateY(-2px); }
+
+    .feature-card.featured {
+      grid-column: span 2;
+      background: var(--brown);
+      color: white;
+    }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(232,115,58,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .featured .feature-icon {
+      background: rgba(232,115,58,0.2);
+    }
+
+    .feature-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--brown);
+      margin-bottom: 6px;
+    }
+
+    .featured .feature-title { color: white; }
+
+    .feature-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--brown-mid);
+      font-weight: 300;
+    }
+
+    .featured .feature-desc { color: rgba(255,255,255,0.65); }
+
+    /* ── Pricing ── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .pricing-card {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 36px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(232,115,58,0.1);
+    }
+
+    .pricing-card.pro {
+      background: var(--brown);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pricing-card.pro::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 120px;
+      height: 120px;
+      background: rgba(232,115,58,0.2);
+      border-radius: 50%;
+    }
+
+    .pricing-tier {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 12px;
+    }
+
+    .pro .pricing-tier { color: var(--orange-light); }
+
+    .pricing-price {
+      font-family: 'Syne', sans-serif;
+      font-size: 44px;
+      font-weight: 800;
+      color: var(--brown);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .pro .pricing-price { color: white; }
+
+    .pricing-period {
+      font-size: 13px;
+      color: var(--brown-mid);
+      margin-bottom: 28px;
+    }
+
+    .pro .pricing-period { color: rgba(255,255,255,0.5); }
+
+    .pricing-features {
+      list-style: none;
+      margin-bottom: 28px;
+    }
+
+    .pricing-features li {
+      font-size: 13px;
+      color: var(--brown-mid);
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(61,32,18,0.06);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pro .pricing-features li {
+      color: rgba(255,255,255,0.75);
+      border-bottom-color: rgba(255,255,255,0.08);
+    }
+
+    .pricing-features li::before {
+      content: '✓';
+      color: var(--orange);
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .btn-pricing-free {
+      display: block;
+      text-align: center;
+      border: 1.5px solid rgba(61,32,18,0.15);
+      color: var(--brown);
+      padding: 12px;
+      border-radius: 100px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .btn-pricing-free:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .btn-pricing-pro {
+      display: block;
+      text-align: center;
+      background: var(--orange);
+      color: white;
+      padding: 12px;
+      border-radius: 100px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .btn-pricing-pro:hover {
+      background: var(--orange-light);
+      transform: translateY(-1px);
+    }
+
+    /* ── CTA Section ── */
+    .cta-section {
+      background: var(--brown);
+      margin: 0 60px 80px;
+      border-radius: 32px;
+      padding: 72px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      left: -60px;
+      width: 200px;
+      height: 200px;
+      background: rgba(232,115,58,0.15);
+      border-radius: 50%;
+    }
+
+    .cta-section::after {
+      content: '';
+      position: absolute;
+      bottom: -80px;
+      right: -40px;
+      width: 240px;
+      height: 240px;
+      background: rgba(232,115,58,0.1);
+      border-radius: 50%;
+    }
+
+    .cta-section h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 44px;
+      font-weight: 800;
+      color: white;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-section p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.6);
+      font-weight: 300;
+      margin-bottom: 36px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-section .btn-primary {
+      margin: 0 auto;
+      display: inline-flex;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 32px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(61,32,18,0.08);
+      font-size: 13px;
+      color: var(--brown-mid);
+    }
+
+    footer a { color: var(--brown-mid); text-decoration: none; }
+    footer a:hover { color: var(--orange); }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      nav { padding: 20px 24px; }
+      .hero { grid-template-columns: 1fr; padding: 48px 24px 40px; gap: 40px; }
+      .hero h1 { font-size: 40px; }
+      .hero-visual { order: -1; }
+      .section { padding: 60px 24px; }
+      .steps { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .feature-card.featured { grid-column: span 1; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+      .cta-section { margin: 0 24px 60px; padding: 48px 32px; }
+      .cta-section h2 { font-size: 32px; }
+      footer { flex-direction: column; gap: 12px; padding: 24px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <a href="/" class="nav-logo">
+      <span>📍</span>
+      MapsLeadFindr
+    </a>
+    <a href="https://chromewebstore.google.com/detail/google-maps-lead-finder-a/kpagolangecppljjffkcgemblkggcflm" class="nav-cta">Add to Chrome — Free</a>
+  </nav>
+
+  <!-- Hero -->
+  <section style="max-width:1200px; margin:0 auto;">
+    <div class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">🔥 Built for local SEO agencies</div>
+        <h1>Find <em>weak</em> Google Business Profiles in seconds</h1>
+        <p class="hero-sub">
+          Search Google Maps, click the extension, and instantly see which local businesses have poor ratings, few reviews, or no website — scored by AI with outreach copy ready to send.
+        </p>
+        <div class="hero-actions">
+          <a href="https://chromewebstore.google.com/detail/google-maps-lead-finder-a/kpagolangecppljjffkcgemblkggcflm" class="btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="2.83" y2="8"/><line x1="21.17" y1="16" x2="2.83" y2="16"/></svg>
+            Add to Chrome — It's Free
+          </a>
+          <a href="#how-it-works" class="btn-secondary">See how it works →</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-number">50</div>
+            <div class="stat-label">Free analyses/month</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">~10s</div>
+            <div class="stat-label">Per full scan</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">$0.001</div>
+            <div class="stat-label">Cost per lead scored</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div style="position:relative;">
+          <div class="floating-card floating-card-1">
+            <div class="fc-icon">🔥</div>
+            <div>
+              <div class="fc-label">Hot leads found</div>
+              <div class="fc-value">7 this scan</div>
+            </div>
+          </div>
+
+          <div class="phone-mockup">
+            <div class="phone-header">
+              <div class="phone-title">📍 Lead Finder AI</div>
+              <div class="phone-badge">3 hot leads</div>
+            </div>
+
+            <div class="lead-card">
+              <div class="lead-card-top">
+                <div>
+                  <div class="lead-name">Glow Med Spa</div>
+                  <div class="lead-cat">Medical spa · Indianapolis</div>
+                </div>
+                <div class="score-badge score-hot">🔥 9/10</div>
+              </div>
+              <div class="lead-signals">
+                <span class="signal-pill">3.8★ rating</span>
+                <span class="signal-pill">12 reviews</span>
+                <span class="signal-pill">No website</span>
+              </div>
+            </div>
+
+            <div class="lead-card">
+              <div class="lead-card-top">
+                <div>
+                  <div class="lead-name">Revive Wellness</div>
+                  <div class="lead-cat">Med spa · Carmel, IN</div>
+                </div>
+                <div class="score-badge score-hot">🔥 8/10</div>
+              </div>
+              <div class="lead-signals">
+                <span class="signal-pill">4.1★ rating</span>
+                <span class="signal-pill">19 reviews</span>
+              </div>
+            </div>
+
+            <div class="lead-card">
+              <div class="lead-card-top">
+                <div>
+                  <div class="lead-name">Pure Aesthetics</div>
+                  <div class="lead-cat">Medical spa · Fishers, IN</div>
+                </div>
+                <div class="score-badge score-warm">⚡ 6/10</div>
+              </div>
+              <div class="lead-signals">
+                <span class="signal-pill">4.3★ rating</span>
+                <span class="signal-pill">31 reviews</span>
+              </div>
+            </div>
+
+            <button class="scan-btn">🔍 Find Leads on This Page</button>
+          </div>
+
+          <div class="floating-card floating-card-2">
+            <div class="fc-label" style="margin-bottom:4px;">Outreach ready</div>
+            <div class="fc-value">Copy in 1 click ✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="section" id="how-it-works">
+    <div class="section-label">How it works</div>
+    <div class="section-title">From Google Maps to<br>qualified lead in 10 seconds</div>
+
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-number">01</div>
+        <div class="step-icon">🗺️</div>
+        <div class="step-title">Search Google Maps</div>
+        <div class="step-desc">Go to Google Maps and search for any local business type — "med spas in Miami", "plumbers in Dallas", anything you want to prospect.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-number">02</div>
+        <div class="step-icon">🤖</div>
+        <div class="step-title">AI scores every listing</div>
+        <div class="step-desc">Click the extension. It reads every visible business, sends the data to our AI, and scores each one 1–10 based on rating weakness, review count, and missing website.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-number">03</div>
+        <div class="step-icon">✉️</div>
+        <div class="step-title">Copy and reach out</div>
+        <div class="step-desc">Every hot lead comes with a written explanation of why they're a lead and a personalized cold outreach message — ready to copy and send.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section" id="features">
+    <div class="section-label">Features</div>
+    <div class="section-title">Everything you need to<br>find and close local clients</div>
+
+    <div class="features-grid">
+      <div class="feature-card featured">
+        <div class="feature-icon">🎯</div>
+        <div>
+          <div class="feature-title">AI Lead Scoring (1–10)</div>
+          <div class="feature-desc">Every business gets a score based on rating, review count, and website presence. Hot leads (8–10) are businesses practically waving a flag saying they need help. Filter by score to focus only on your best prospects.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div>
+          <div class="feature-title">One-click outreach copy</div>
+          <div class="feature-desc">AI-written, personalized cold messages for every lead. Hit copy, paste into email or DM. No more blank page syndrome.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">💾</div>
+        <div>
+          <div class="feature-title">Save & export to CSV</div>
+          <div class="feature-desc">Save your best leads to your personal database and export them anytime as a clean CSV — sorted by score.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div>
+          <div class="feature-title">Works on any niche</div>
+          <div class="feature-desc">Med spas, dentists, plumbers, roofers, lawyers — if it's on Google Maps, you can prospect it.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <div>
+          <div class="feature-title">Private by design</div>
+          <div class="feature-desc">Your data stays yours. Settings stored locally in your browser. No account required to get started.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section" id="pricing">
+    <div class="section-label">Pricing</div>
+    <div class="section-title" style="text-align:center;">Simple, honest pricing</div>
+
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-tier">Free</div>
+        <div class="pricing-price">$0</div>
+        <div class="pricing-period">forever</div>
+        <ul class="pricing-features">
+          <li>50 AI analyses per month</li>
+          <li>Lead scoring (1–10)</li>
+          <li>Outreach message generation</li>
+          <li>Save up to 25 leads</li>
+          <li>CSV export</li>
+        </ul>
+        <a href="https://chromewebstore.google.com/detail/google-maps-lead-finder-a/kpagolangecppljjffkcgemblkggcflm" class="btn-pricing-free">Add to Chrome</a>
+      </div>
+
+      <div class="pricing-card pro">
+        <div class="pricing-tier">Pro — Coming Soon</div>
+        <div class="pricing-price">$49</div>
+        <div class="pricing-period">per month</div>
+        <ul class="pricing-features">
+          <li>Unlimited analyses</li>
+          <li>Everything in Free</li>
+          <li>Unlimited saved leads</li>
+          <li>Priority support</li>
+          <li>Early access to new features</li>
+        </ul>
+        <a href="mailto:nicholasemccormick@gmail.com?subject=MapsLeadFindr Pro Waitlist" class="btn-pricing-pro">Join the waitlist</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <h2>Start finding leads<br>in the next 2 minutes</h2>
+    <p>Free to install. No account required. Works instantly on Google Maps.</p>
+    <a href="https://chromewebstore.google.com/detail/google-maps-lead-finder-a/kpagolangecppljjffkcgemblkggcflm" class="btn-primary">
+      Add to Chrome — It's Free
+    </a>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div style="font-family:'Syne',sans-serif; font-weight:700;">MapsLeadFindr</div>
+    <div style="display:flex; gap:24px;">
+      <a href="/privacy">Privacy Policy</a>
+      <a href="mailto:nicholasemccormick@gmail.com">Contact</a>
+    </div>
+    <div>© 2026 MapsLeadFindr. All rights reserved.</div>
+  </footer>
+
+</body>
+</html>
